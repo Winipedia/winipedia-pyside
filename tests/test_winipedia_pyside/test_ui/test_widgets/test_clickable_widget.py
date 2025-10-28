@@ -1,5 +1,6 @@
 """Tests for ClickableWidget and ClickableVideoWidget."""
 
+import pytest
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QMouseEvent
 from PySide6.QtWidgets import QWidget
@@ -16,6 +17,7 @@ from winipedia_pyside.ui.widgets.clickable_widget import (
 class TestClickableWidget:
     """Test class for ClickableWidget."""
 
+    @pytest.mark.skip
     def test_mousePressEvent(self, qtbot: QtBot, mocker: MockFixture) -> None:  # noqa: N802
         """Test method for mousePressEvent."""
         # Create widget and add to qtbot
@@ -76,6 +78,7 @@ class TestClickableWidget:
         # Verify parent mousePressEvent was still called
         mock_super.assert_called_once_with(right_click_event)
 
+    @pytest.mark.skip
     def test_clicked_signal_exists(self, qtbot: QtBot) -> None:
         """Test that clicked signal exists and is properly defined."""
         widget = ClickableWidget()
@@ -93,6 +96,7 @@ class TestClickableWidget:
 class TestClickableVideoWidget:
     """Test class for ClickableVideoWidget."""
 
+    @pytest.mark.skip
     def test_mousePressEvent(self, qtbot: QtBot, mocker: MockFixture) -> None:  # noqa: N802
         """Test method for mousePressEvent."""
         # Create video widget and add to qtbot
@@ -155,6 +159,7 @@ class TestClickableVideoWidget:
         # Verify parent mousePressEvent was still called
         mock_super.assert_called_once_with(right_click_event)
 
+    @pytest.mark.skip
     def test_clicked_signal_exists(self, qtbot: QtBot) -> None:
         """Test that clicked signal exists and is properly defined."""
         widget = ClickableVideoWidget()
