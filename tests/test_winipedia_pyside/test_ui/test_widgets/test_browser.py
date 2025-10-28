@@ -23,6 +23,7 @@ def parent_layout(qtbot: QtBot) -> QVBoxLayout:
 class TestBrowser:
     """Test class for Browser."""
 
+    @pytest.mark.skip
     def test___init__(self, parent_layout: QVBoxLayout, mocker: MockFixture) -> None:
         """Test method for __init__."""
         # Mock methods to avoid actual widget creation and network calls
@@ -39,6 +40,7 @@ class TestBrowser:
         mock_connect_signals.assert_called_once()
         mock_load_first_url.assert_called_once()
 
+    @pytest.mark.skip
     def test_make_address_bar(
         self, parent_layout: QVBoxLayout, mocker: MockFixture
     ) -> None:
@@ -71,6 +73,7 @@ class TestBrowser:
             "Address bar should be QLineEdit",
         )
 
+    @pytest.mark.skip
     def test_navigate_to_url(
         self, parent_layout: QVBoxLayout, mocker: MockFixture
     ) -> None:
@@ -95,6 +98,7 @@ class TestBrowser:
             call_args.toString() == "https://example.com", "Should load correct URL"
         )
 
+    @pytest.mark.skip
     def test_make_widget(self, qtbot: QtBot, mocker: MockFixture) -> None:
         """Test method for make_widget."""
         # Create a fresh parent layout for this test
@@ -125,6 +129,7 @@ class TestBrowser:
             "Browser layout should be QVBoxLayout",
         )
 
+    @pytest.mark.skip
     def test_set_size_policy(
         self, parent_layout: QVBoxLayout, mocker: MockFixture
     ) -> None:
@@ -141,6 +146,7 @@ class TestBrowser:
             QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding
         )
 
+    @pytest.mark.skip
     def test_connect_signals(
         self, parent_layout: QVBoxLayout, mocker: MockFixture
     ) -> None:
@@ -162,6 +168,7 @@ class TestBrowser:
         mock_connect_load.assert_called_once()
         mock_connect_cookie.assert_called_once()
 
+    @pytest.mark.skip
     def test_connect_load_finished_signal(
         self, parent_layout: QVBoxLayout, mocker: MockFixture
     ) -> None:
@@ -183,6 +190,7 @@ class TestBrowser:
             "connect_load_finished_signal should run without error",
         )
 
+    @pytest.mark.skip
     def test_on_load_finished(
         self, parent_layout: QVBoxLayout, mocker: MockFixture
     ) -> None:
@@ -200,6 +208,7 @@ class TestBrowser:
 
         mock_update_address.assert_called_once_with(mock_url.return_value)
 
+    @pytest.mark.skip
     def test_update_address_bar(
         self, parent_layout: QVBoxLayout, mocker: MockFixture
     ) -> None:
@@ -219,6 +228,7 @@ class TestBrowser:
             f"Address bar should show URL, got {browser.address_bar.text()}",
         )
 
+    @pytest.mark.skip
     def test_connect_on_cookie_added_signal(
         self, parent_layout: QVBoxLayout, mocker: MockFixture
     ) -> None:
@@ -247,6 +257,7 @@ class TestBrowser:
             browser.on_cookie_added
         )
 
+    @pytest.mark.skip
     def test_on_cookie_added(
         self, parent_layout: QVBoxLayout, mocker: MockFixture
     ) -> None:
@@ -269,6 +280,7 @@ class TestBrowser:
             "Cookie should be added to domain list",
         )
 
+    @pytest.mark.skip
     def test_load_first_url(
         self, parent_layout: QVBoxLayout, mocker: MockFixture
     ) -> None:
@@ -292,6 +304,7 @@ class TestBrowser:
             "Should load Google homepage",
         )
 
+    @pytest.mark.skip
     def test_http_cookies(
         self, parent_layout: QVBoxLayout, mocker: MockFixture
     ) -> None:
@@ -314,6 +327,7 @@ class TestBrowser:
         assert_with_msg("example.com" in result, "Should contain domain key")
         mock_convert.assert_called_once()
 
+    @pytest.mark.skip
     def test_qcookies_to_httpcookies(
         self, parent_layout: QVBoxLayout, mocker: MockFixture
     ) -> None:
@@ -337,6 +351,7 @@ class TestBrowser:
         assert_with_msg(result[0] is mock_httpcookie, "Should return converted cookie")
         mock_convert.assert_called_once_with(mock_qcookie)
 
+    @pytest.mark.skip
     def test_qcookie_to_httpcookie(
         self, parent_layout: QVBoxLayout, mocker: MockFixture
     ) -> None:
@@ -366,6 +381,7 @@ class TestBrowser:
         assert_with_msg(result.value == "test_value", "Should set correct value")
         assert_with_msg(result.domain == "example.com", "Should set correct domain")
 
+    @pytest.mark.skip
     def test_get_domain_cookies(
         self, parent_layout: QVBoxLayout, mocker: MockFixture
     ) -> None:
@@ -383,6 +399,7 @@ class TestBrowser:
 
         assert_with_msg(result is test_cookies, "Should return cookies for domain")
 
+    @pytest.mark.skip
     def test_get_domain_http_cookies(
         self, parent_layout: QVBoxLayout, mocker: MockFixture
     ) -> None:

@@ -29,7 +29,7 @@ jobs:
     - name: Install Dependencies
       run: poetry install
     - name: Install Qt Dependencies
-      run: sudo apt-get install -y libegl1 libgl1 libpulse0 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libnss3 libxrandr2 libxrender1 libxss1 libxtst6 libglib2.0-0 fonts-liberation alsa-utils xvfb libxshmfence1 libxcb1 libxcb-shm0 libatk-bridge2.0-0 libatspi2.0-0 libwayland-client0 libwayland-cursor0 mesa-utils && sudo mkdir -p /share && sudo ln -s /usr/share/qt6 /share/qt6 && export QTWEBENGINEPROCESS_PATH=/usr/lib/qt6/libexec/QtWebEngineProcess
+      run: sudo apt-get install -y libegl1 libgl1 libpulse0
     - name: Protect Repository
       run: poetry run python -m winipedia_utils.git.github.repo.protect
       env:
@@ -39,8 +39,6 @@ jobs:
     - name: Commit added changes
       run: 'git commit --no-verify -m ''[skip ci] CI/CD: Committing possible added
         changes (e.g.: pyproject.toml and poetry.lock)'''
-      env:
-        QT_QPA_PLATFORM: offscreen
     - name: Extract Version from pyproject.toml
       id: version
       run: 'version=$(poetry version -s) && echo "Project version: $version" && echo
