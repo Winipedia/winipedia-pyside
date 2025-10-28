@@ -1,16 +1,17 @@
-name: Release Workflow
+name: Health Check Workflow
 'on':
-  push:
-    branches:
-    - main
-  workflow_dispatch: {}
+  pull_request:
+    types:
+    - opened
+    - synchronize
+    - reopened
   schedule:
-  - cron: 0 6 * * 2
-permissions:
-  contents: write
-run-name: Release Workflow
+  - cron: 0 6 * * *
+  workflow_dispatch: {}
+permissions: {}
+run-name: Health Check Workflow
 jobs:
-  release:
+  health_check:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -41,18 +42,3 @@ jobs:
       id: version
       run: 'version=$(poetry version -s) && echo "Project version: $version" && echo
         "version=v$version" >> $GITHUB_OUTPUT'
-    - name: Tag and Push
-      run: git push && git tag ${{ steps.version.outputs.version }} && git push origin
-        ${{ steps.version.outputs.version }}
-    - name: Build Changelog
-      id: build_changelog
-      uses: mikepenz/release-changelog-builder-action@develop
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Create GitHub Release
-      uses: ncipollo/release-action@main
-      with:
-        tag: ${{ steps.version.outputs.version }}
-        name: ${{ github.event.repository.name }} ${{ steps.version.outputs.version
-          }}
-        body: ${{ steps.build_changelog.outputs.changelog }}
