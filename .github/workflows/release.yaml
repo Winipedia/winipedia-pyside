@@ -1,42 +1,79 @@
-name: Create Release
+name: Release Workflow
 'on':
   push:
     tags:
     - v*
+    branches:
+    - main
+  workflow_dispatch: {}
+  schedule:
+  - cron: 0 6 * * 2
 permissions:
   contents: write
-run-name: 'Create Release: ${{ github.event.repository.name }}-${{ github.ref_name
-  }}'
+run-name: Release Workflow
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v5
+      uses: actions/checkout@main
+      with:
+        token: ${{ secrets.REPO_TOKEN }}
+    - name: Setup Git
+      uses: actions/checkout@main
       with:
         fetch-depth: 0
-    - name: Assert running on head of main
+        token: ${{ secrets.REPO_TOKEN }}
+      run: git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        && git config --global user.name "github-actions[bot]"
+    - name: Setup Python
       run: git fetch origin main --depth=1; main_sha=$(git rev-parse origin/main);
         if [ "$GITHUB_SHA" != "$main_sha" ]; then echo "Tag commit is not the latest
         commit on main."; exit 1; fi
-    - name: Setup Python
-      uses: actions/setup-python@v6
+      uses: actions/setup-python@main
       with:
         python-version: 3.x
     - name: Install Poetry
+      uses: actions/setup-python@v6
+      with:
+        python-version: 3.x
       run: curl -sSL https://install.python-poetry.org | python3 -
     - name: Install Dependencies
       run: poetry install
-    - name: Run Pre-commit Hooks
-      run: poetry run pre-commit run --all-files
-    - name: Build Changelog
+    - name: Protect Repository
+      run: poetry run python -m winipedia_utils.git.github.repo.protect
+      env:
+        REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
+    - name: Run Hooks
+      run: poetry run pre-commit run --all-files --verbose
+    - name: Commit added changes
       id: build_changelog
       uses: mikepenz/release-changelog-builder-action@v5
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Create GitHub Release
+      run: 'git commit --no-verify -m ''[skip ci] CI/CD: Committing possible added
+        changes (e.g.: pyproject.toml and poetry.lock)'''
+    - name: Extract Version from pyproject.toml
       uses: ncipollo/release-action@v1
       with:
         tag: ${{ github.ref_name }}
         name: ${{ github.event.repository.name }}-${{ github.ref_name }}
+        body: ${{ steps.build_changelog.outputs.changelog }}
+      id: version
+      run: 'version=$(poetry version -s) && echo "Project version: $version" && echo
+        "version=v$version" >> $GITHUB_OUTPUT'
+    - name: Tag and Push
+      run: git push && git tag ${{ steps.version.outputs.version }} && git push origin
+        ${{ steps.version.outputs.version }}
+    - name: Build Changelog
+      id: build_changelog
+      uses: mikepenz/release-changelog-builder-action@develop
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Create GitHub Release
+      uses: ncipollo/release-action@main
+      with:
+        tag: ${{ steps.version.outputs.version }}
+        name: ${{ github.event.repository.name }} ${{ steps.version.outputs.version
+          }}
         body: ${{ steps.build_changelog.outputs.changelog }}
