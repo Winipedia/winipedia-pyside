@@ -30,7 +30,7 @@ jobs:
     - name: Install PySide6 System Dependencies
       run: sudo apt-get update && sudo apt-get install -y libegl1 libpulse0
     - name: Run Tests
-      run: xvfb-run -s "-screen 0 1920x1080x24" poetry run pytest
+      run: poetry run pytest
       env:
         QT_QPA_PLATFORM: offscreen
         QTWEBENGINE_DISABLE_SANDBOX: 1
