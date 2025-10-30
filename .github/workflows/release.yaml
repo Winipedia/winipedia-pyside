@@ -34,42 +34,21 @@ jobs:
         REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
     - name: Run Hooks
       run: poetry run pre-commit run --all-files --verbose
-      env:
-        REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
     - name: Commit added changes
       run: 'git commit --no-verify -m ''[skip ci] CI/CD: Committing possible added
         changes (e.g.: pyproject.toml and poetry.lock)'''
     - name: Extract Version from pyproject.toml
+      id: version
       run: 'version=$(poetry version -s) && echo "Project version: $version" && echo
         "version=v$version" >> $GITHUB_OUTPUT'
-      id: version
     - name: Tag and Push
-      id: version
       run: git push && git tag ${{ steps.version.outputs.version }} && git push origin
         ${{ steps.version.outputs.version }}
     - name: Build Changelog
-      run: git push && git tag ${{ steps.version.outputs.version }} && git push origin
-        ${{ steps.version.outputs.version }}
       id: build_changelog
       uses: mikepenz/release-changelog-builder-action@develop
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Create GitHub Release
-      uses: ncipollo/release-action@main
-      with:
-        tag: ${{ steps.version.outputs.version }}
-        name: ${{ github.event.repository.name }} ${{ steps.version.outputs.version
-          }}
-        body: ${{ steps.build_changelog.outputs.changelog }}
-    - name: Create GitHub Release
-      id: build_changelog
-      uses: ncipollo/release-action@main
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        tag: ${{ steps.version.outputs.version }}
-        name: ${{ github.event.repository.name }} ${{ steps.version.outputs.version
-          }}
-        body: ${{ steps.build_changelog.outputs.changelog }}
     - name: Create GitHub Release
       uses: ncipollo/release-action@main
       with:
