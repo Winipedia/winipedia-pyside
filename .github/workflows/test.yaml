@@ -1,10 +1,10 @@
-name: Release Workflow
+name: Test Workflow
 'on':
   workflow_dispatch: {}
   
 permissions:
   contents: write
-run-name: Release Workflow
+run-name: Test Workflow
 jobs:
   release:
     runs-on: ubuntu-latest
