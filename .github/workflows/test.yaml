@@ -25,6 +25,6 @@ jobs:
     - name: Install Dependencies
       run: poetry install
     - name: Create Tests
-      run: poetry run python -m winipedia_utils.testing.create_tests
+      run: xvfb-run -s "-screen 0 1920x1080x24" poetry run python -m winipedia_utils.testing.create_tests
     - name: Run Tests
       run: poetry run pytest
