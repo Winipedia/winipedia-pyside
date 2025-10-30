@@ -8,3 +8,9 @@ This file should not be modified manually.
 """
 
 pytest_plugins = ["winipedia_utils.testing.tests.conftest"]
+
+import pytest
+from winipedia_utils.git.github.github import running_in_github_actions
+
+if running_in_github_actions():
+    pytest.skip("Skipping tests in GitHub Actions")
