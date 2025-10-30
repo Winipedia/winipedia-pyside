@@ -12,5 +12,5 @@ def skip_tests_in_github_actions() -> None:
     Returns:
         bool: True if tests should be skipped, False otherwise.
     """
-    if running_in_github_actions():
+    if not running_in_github_actions():
         pytest.skip("Skipping tests in GitHub Actions")
