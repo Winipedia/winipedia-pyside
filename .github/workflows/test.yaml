@@ -1,0 +1,29 @@
+name: Release Workflow
+'on':
+  workflow_dispatch: {}
+  
+permissions:
+  contents: write
+run-name: Release Workflow
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@main
+      with:
+        token: ${{ secrets.REPO_TOKEN }}
+    - name: Setup Git
+      run: git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        && git config --global user.name "github-actions[bot]"
+    - name: Setup Python
+      uses: actions/setup-python@main
+      with:
+        python-version: '3.13'
+    - name: Install Poetry
+      run: curl -sSL https://install.python-poetry.org | python3 -
+    - name: Install Dependencies
+      run: poetry install
+      run: poetry run python -m winipedia_utils.testing.create_tests
+    - name: Run Tests
+      run: poetry run pytest
