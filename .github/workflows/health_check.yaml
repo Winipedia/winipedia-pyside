@@ -10,9 +10,22 @@ name: Health Check Workflow
   workflow_dispatch: {}
 permissions: {}
 run-name: Health Check Workflow
+defaults:
+  run:
+    shell: bash
 jobs:
-  health_check:
-    runs-on: ubuntu-latest
+  health_check_matrix:
+    strategy:
+      matrix:
+        os:
+        - ubuntu-latest
+        - windows-latest
+        - macos-latest
+        python-version:
+        - '3.12'
+        - '3.13'
+      fail-fast: true
+    runs-on: ${{ matrix.os }}
     steps:
     - name: Checkout repository
       uses: actions/checkout@main
@@ -24,18 +37,20 @@ jobs:
     - name: Setup Python
       uses: actions/setup-python@main
       with:
-        python-version: '3.13'
-    - name: Install Poetry
-      run: curl -sSL https://install.python-poetry.org | python3 -
+        python-version: ${{ matrix.python-version }}
+    - name: Setup Poetry
+      uses: snok/install-poetry@main
+    - name: Add Poetry to PATH
+      run: echo 'C:/Users/runneradmin/.local/bin' >> $GITHUB_PATH
     - name: Install Dependencies
       run: poetry install
     - name: Setup CI keyring
-      run: 'poetry run pip install keyrings.alt && poetry run python -c "import keyring;
-        from keyrings.alt.file import PlaintextKeyring; keyring.set_keyring(PlaintextKeyring());
-        keyring.set_password(''video_vault'',''ci_user'',''ci-secret-token''); print(''Keyring
-        OK:'', keyring.get_password(''video_vault'',''ci_user''))" '
+      run: poetry run pip install keyrings.alt && poetry run python -c "import keyring;
+        from keyrings.alt.file import PlaintextKeyring; keyring.set_keyring(PlaintextKeyring());"
     - name: Install PySide6 System Dependencies
       run: sudo apt-get update && sudo apt-get install -y libegl1 libpulse0
+      env:
+        REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
     - name: Protect Repository
       run: poetry run python -m winipedia_utils.git.github.repo.protect
       env:
@@ -47,10 +62,10 @@ jobs:
         QTWEBENGINE_DISABLE_SANDBOX: '1'
         QTWEBENGINE_CHROMIUM_FLAGS: --no-sandbox --disable-gpu --disable-software-rasterizer
           --disable-dev-shm-usage
-    - name: Commit added changes
-      run: 'git commit --no-verify -m ''[skip ci] CI/CD: Committing possible added
-        changes (e.g.: pyproject.toml and poetry.lock)'''
-    - name: Extract Version from pyproject.toml
-      id: version
-      run: 'version=$(poetry version -s) && echo "Project version: $version" && echo
-        "version=v$version" >> $GITHUB_OUTPUT'
+  health_check:
+    runs-on: ubuntu-latest
+    needs:
+    - health_check_matrix
+    steps:
+    - name: Aggregate Matrix Results
+      run: echo 'Aggregating matrix results into one job.'
