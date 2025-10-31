@@ -28,6 +28,11 @@ jobs:
       run: curl -sSL https://install.python-poetry.org | python3 -
     - name: Install Dependencies
       run: poetry install
+    - name: Setup CI keyring
+      run: 'poetry run pip install keyrings.alt && poetry run python -c "import keyring;
+        from keyrings.alt.file import PlaintextKeyring; keyring.set_keyring(PlaintextKeyring());
+        keyring.set_password(''video_vault'',''ci_user'',''ci-secret-token''); print(''Keyring
+        OK:'', keyring.get_password(''video_vault'',''ci_user''))" '
     - name: Install PySide6 System Dependencies
       run: sudo apt-get update && sudo apt-get install -y libegl1 libpulse0
     - name: Protect Repository
@@ -37,10 +42,10 @@ jobs:
     - name: Run Hooks
       run: poetry run pre-commit run --all-files --verbose
       env:
+        QT_QPA_PLATFORM: offscreen
         QTWEBENGINE_DISABLE_SANDBOX: '1'
         QTWEBENGINE_CHROMIUM_FLAGS: --no-sandbox --disable-gpu --disable-software-rasterizer
           --disable-dev-shm-usage
-        QT_QPA_PLATFORM: offscreen
     - name: Commit added changes
       run: 'git commit --no-verify -m ''[skip ci] CI/CD: Committing possible added
         changes (e.g.: pyproject.toml and poetry.lock)'''

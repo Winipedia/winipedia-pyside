@@ -29,10 +29,13 @@ jobs:
       run: curl -sSL https://install.python-poetry.org | python3 -
     - name: Install Dependencies
       run: poetry install
+    - name: Setup CI keyring
+      run: 'poetry run pip install keyrings.alt && poetry run python -c "import keyring;
+        from keyrings.alt.file import PlaintextKeyring; keyring.set_keyring(PlaintextKeyring());
+        keyring.set_password(''video_vault'',''ci_user'',''ci-secret-token''); print(''Keyring
+        OK:'', keyring.get_password(''video_vault'',''ci_user''))" '
     - name: Install PySide6 System Dependencies
       run: sudo apt-get update && sudo apt-get install -y libegl1 libpulse0
-      env:
-        REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
     - name: Protect Repository
       run: poetry run python -m winipedia_utils.git.github.repo.protect
       env:
@@ -45,7 +48,6 @@ jobs:
         QTWEBENGINE_CHROMIUM_FLAGS: --no-sandbox --disable-gpu --disable-software-rasterizer
           --disable-dev-shm-usage
     - name: Commit added changes
-      id: version
       run: 'git commit --no-verify -m ''[skip ci] CI/CD: Committing possible added
         changes (e.g.: pyproject.toml and poetry.lock)'''
     - name: Extract Version from pyproject.toml

@@ -36,23 +36,16 @@ class PySide6WorkflowMixin(WinipediaWorkflow):
     @classmethod
     def get_poetry_setup_steps(
         cls,
-        *,
-        install_dependencies: bool = False,
-        fetch_depth: int | None = None,
-        configure_pipy_token: bool = False,
-        force_main_head: bool = False,
-        token: bool = False,
+        *args: Any,
+        **kwargs: Any,
     ) -> list[dict[str, Any]]:
         """Get the poetry setup steps.
 
         We need to install additional system dependencies for pyside6.
         """
         steps = super().get_poetry_setup_steps(
-            install_dependencies=install_dependencies,
-            fetch_depth=fetch_depth,
-            configure_pipy_token=configure_pipy_token,
-            force_main_head=force_main_head,
-            token=token,
+            *args,
+            **kwargs,
         )
         steps.append(
             {
