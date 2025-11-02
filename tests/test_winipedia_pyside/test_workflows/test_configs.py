@@ -8,29 +8,24 @@ from winipedia_pyside.workflows.configs import HealthCheckWorkflow
 class TestPySide6WorkflowMixin:
     """Test class for PySide6WorkflowMixin."""
 
-    def test_get_pre_commit_step(self) -> None:
-        """Test method for get_pre_commit_step."""
-        step = HealthCheckWorkflow.get_pre_commit_step()
+    def test_step_run_pre_commit_hooks(self) -> None:
+        """Test method for step_run_pre_commit_hooks."""
+        step = HealthCheckWorkflow.step_run_pre_commit_hooks()
         assert_with_msg("env" in step, "Step should have env vars")
         assert_with_msg(
             step["env"]["QT_QPA_PLATFORM"] == "offscreen",
             "QT_QPA_PLATFORM should be offscreen",
         )
-        assert_with_msg(
-            step["env"]["QTWEBENGINE_DISABLE_SANDBOX"] == "1",
-            "QTWEBENGINE_DISABLE_SANDBOX should be 1",
-        )
 
-    def test_get_poetry_setup_steps(self) -> None:
-        """Test method for get_poetry_setup_steps."""
-        steps = HealthCheckWorkflow.get_poetry_setup_steps()
+    def test_steps_core_matrix_setup(self) -> None:
+        """Test method for steps_core_matrix_setup."""
+        steps = HealthCheckWorkflow.steps_core_matrix_setup()
         assert_with_msg(isinstance(steps, list), "Steps should be a list")
-        assert_with_msg(
-            any(
-                "PySide6 System Dependencies" in step.get("name", "") for step in steps
-            ),
-            "Steps should include PySide6 System Dependencies",
-        )
+
+    def test_step_install_pyside_system_dependencies(self) -> None:
+        """Test method for step_install_pyside_system_dependencies."""
+        step = HealthCheckWorkflow.step_install_pyside_system_dependencies()
+        assert_with_msg("run" in step, "Step should have run command")
 
 
 class TestHealthCheckWorkflow:

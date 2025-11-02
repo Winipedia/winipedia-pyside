@@ -1,11 +1,16 @@
 name: Release Workflow
 'on':
+  workflow_dispatch: {}
+  pull_request:
+    types:
+    - opened
+    - synchronize
+    - reopened
+  schedule:
+  - cron: 0 6 * * 2
   push:
     branches:
     - main
-  workflow_dispatch: {}
-  schedule:
-  - cron: 0 6 * * 2
 permissions:
   contents: write
 run-name: Release Workflow
@@ -26,99 +31,141 @@ jobs:
       fail-fast: true
     runs-on: ${{ matrix.os }}
     steps:
-    - name: Checkout repository
+    - name: Checkout Repository
+      id: checkout_repository
       uses: actions/checkout@main
-      with:
-        token: ${{ secrets.REPO_TOKEN }}
-    - name: Setup Git
-      run: git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        && git config --global user.name "github-actions[bot]"
     - name: Setup Python
+      id: setup_python
       uses: actions/setup-python@main
       with:
         python-version: ${{ matrix.python-version }}
     - name: Setup Poetry
+      id: setup_poetry
       uses: snok/install-poetry@main
-    - name: Add Poetry to PATH
+    - name: Add Poetry To Windows Path
+      id: add_poetry_to_windows_path
       run: echo 'C:/Users/runneradmin/.local/bin' >> $GITHUB_PATH
-    - name: Install Dependencies
+      if: ${{ runner.os }} == 'Windows'
+    - name: Install Python Dependencies
+      id: install_python_dependencies
       run: poetry install
-    - name: Setup CI keyring
-      run: poetry run pip install keyrings.alt && poetry run python -c "import keyring;
-        from keyrings.alt.file import PlaintextKeyring; keyring.set_keyring(PlaintextKeyring());"
-    - name: Install PySide6 System Dependencies
+    - name: Install Pyside System Dependencies
+      id: install_pyside_system_dependencies
       run: sudo apt-get update && sudo apt-get install -y libegl1 libpulse0
       if: runner.os == 'Linux'
+    - name: Setup Keyring
+      id: setup_keyring
+      run: poetry run pip install keyrings.alt && poetry run python -c "import keyring;
+        from keyrings.alt.file import PlaintextKeyring; keyring.set_keyring(PlaintextKeyring());"
+      env:
+        REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
     - name: Protect Repository
+      id: protect_repository
       run: poetry run python -m winipedia_utils.git.github.repo.protect
       env:
         REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
-    - name: Run Hooks
-      run: poetry run pre-commit run --all-files --verbose
+    - name: Run Pre Commit Hooks
+      id: run_pre_commit_hooks
+      run: poetry version patch && git add pyproject.toml && poetry run pre-commit
+        run --all-files --verbose
       env:
+        REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
         QT_QPA_PLATFORM: offscreen
         QTWEBENGINE_DISABLE_SANDBOX: '1'
         QTWEBENGINE_CHROMIUM_FLAGS: --no-sandbox --disable-gpu --disable-software-rasterizer
           --disable-dev-shm-usage
   health_check:
-    runs-on: ubuntu-latest
     needs:
     - health_check_matrix
+    runs-on: ubuntu-latest
     steps:
     - name: Aggregate Matrix Results
+      id: aggregate_matrix_results
       run: echo 'Aggregating matrix results into one job.'
-  release:
-    runs-on: ubuntu-latest
+  build:
     needs:
     - health_check
+    strategy:
+      matrix:
+        os:
+        - ubuntu-latest
+        - windows-latest
+        - macos-latest
+      fail-fast: true
+    runs-on: ${{ matrix.os }}
     steps:
-    - name: Checkout repository
+    - name: No Build Script
+      id: no_build_script
+      run: echo 'No build script found. Skipping build.'
+  release:
+    needs:
+    - build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repository
+      id: checkout_repository
       uses: actions/checkout@main
       with:
         token: ${{ secrets.REPO_TOKEN }}
-    - name: Setup Git
-      run: git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        && git config --global user.name "github-actions[bot]"
     - name: Setup Python
+      id: setup_python
       uses: actions/setup-python@main
       with:
         python-version: '3.13'
     - name: Setup Poetry
+      id: setup_poetry
       uses: snok/install-poetry@main
-    - name: Install Dependencies
+    - name: Install Python Dependencies
+      id: install_python_dependencies
       run: poetry install
-    - name: Setup CI keyring
+    - name: Setup Git
+      id: setup_git
+      run: git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        && git config --global user.name "github-actions[bot]"
+    - name: Setup Keyring
+      id: setup_keyring
       run: poetry run pip install keyrings.alt && poetry run python -c "import keyring;
         from keyrings.alt.file import PlaintextKeyring; keyring.set_keyring(PlaintextKeyring());"
-    - name: Install PySide6 System Dependencies
-      run: sudo apt-get update && sudo apt-get install -y libegl1 libpulse0
-      if: runner.os == 'Linux'
-    - name: Run Hooks
-      run: poetry run pre-commit run --all-files --verbose
+    - name: Run Pre Commit Hooks
+      id: run_pre_commit_hooks
+      run: poetry version patch && git add pyproject.toml && poetry run pre-commit
+        run --all-files --verbose
       env:
+        REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
         QT_QPA_PLATFORM: offscreen
         QTWEBENGINE_DISABLE_SANDBOX: '1'
         QTWEBENGINE_CHROMIUM_FLAGS: --no-sandbox --disable-gpu --disable-software-rasterizer
           --disable-dev-shm-usage
-    - name: Commit added changes
+    - name: Commit Added Changes
+      id: commit_added_changes
       run: 'git commit --no-verify -m ''[skip ci] CI/CD: Committing possible added
         changes (e.g.: pyproject.toml and poetry.lock)'''
-    - name: Extract Version from pyproject.toml
-      id: version
-      run: 'version=$(poetry version -s) && echo "Project version: $version" && echo
-        "version=v$version" >> $GITHUB_OUTPUT'
-    - name: Tag and Push
-      run: git push && git tag ${{ steps.version.outputs.version }} && git push origin
-        ${{ steps.version.outputs.version }}
+    - name: Push Commits
+      id: push_commits
+      run: git push
+    - name: Create And Push Tag
+      id: create_and_push_tag
+      run: git tag v$(poetry version -s) && git push origin v$(poetry version -s)
+    - name: Extract Version
+      id: extract_version
+      run: echo "version=v$(poetry version -s)" >> $GITHUB_OUTPUT
+    - name: Download Artifacts
+      id: download_artifacts
+      uses: actions/download-artifact@main
+      with:
+        path: artifacts
+        merge-multiple: 'true'
     - name: Build Changelog
       id: build_changelog
       uses: mikepenz/release-changelog-builder-action@develop
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Create GitHub Release
+    - name: Create Release
+      id: create_release
       uses: ncipollo/release-action@main
       with:
-        tag: ${{ steps.version.outputs.version }}
-        name: ${{ github.event.repository.name }} ${{ steps.version.outputs.version
+        tag: ${{ steps.extract_version.outputs.version }}
+        name: ${{ github.event.repository.name }} ${{ steps.extract_version.outputs.version
           }}
         body: ${{ steps.build_changelog.outputs.changelog }}
+        artifacts: artifacts/*

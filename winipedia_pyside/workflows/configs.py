@@ -19,42 +19,49 @@ class PySide6WorkflowMixin(WinipediaWorkflow):
     """
 
     @classmethod
-    def get_pre_commit_step(cls) -> dict[str, Any]:
+    def step_run_pre_commit_hooks(
+        cls,
+        *,
+        step: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """Get the pre-commit step.
 
         We need to add some env vars
         so QtWebEngine doesn't try to use GPU acceleration etc.
         """
-        step = super().get_pre_commit_step()
-        step["env"] = {
-            "QT_QPA_PLATFORM": "offscreen",
-            "QTWEBENGINE_DISABLE_SANDBOX": "1",
-            "QTWEBENGINE_CHROMIUM_FLAGS": "--no-sandbox --disable-gpu --disable-software-rasterizer --disable-dev-shm-usage",  # noqa: E501
-        }
+        step = super().step_run_pre_commit_hooks(step=step)
+        step.setdefault("env", {}).update(
+            {
+                "QT_QPA_PLATFORM": "offscreen",
+                "QTWEBENGINE_DISABLE_SANDBOX": "1",
+                "QTWEBENGINE_CHROMIUM_FLAGS": "--no-sandbox --disable-gpu --disable-software-rasterizer --disable-dev-shm-usage",  # noqa: E501
+            }
+        )
         return step
 
     @classmethod
-    def get_poetry_setup_steps(
-        cls,
-        *args: Any,
-        **kwargs: Any,
+    def steps_core_matrix_setup(
+        cls, python_version: str | None = None, *, repo_token: bool = False
     ) -> list[dict[str, Any]]:
         """Get the poetry setup steps.
 
         We need to install additional system dependencies for pyside6.
         """
-        steps = super().get_poetry_setup_steps(
-            *args,
-            **kwargs,
-        )
+        steps = super().steps_core_matrix_setup(python_version, repo_token=repo_token)
+
         steps.append(
-            {
-                "name": "Install PySide6 System Dependencies",
-                "run": "sudo apt-get update && sudo apt-get install -y libegl1 libpulse0",  # noqa: E501
-                "if": "runner.os == 'Linux'",
-            }
+            cls.step_install_pyside_system_dependencies(),
         )
         return steps
+
+    @classmethod
+    def step_install_pyside_system_dependencies(cls) -> dict[str, Any]:
+        """Get the step to install PySide6 dependencies."""
+        return cls.get_step(
+            step_func=cls.step_install_pyside_system_dependencies,
+            run="sudo apt-get update && sudo apt-get install -y libegl1 libpulse0",
+            if_condition="runner.os == 'Linux'",
+        )
 
 
 class HealthCheckWorkflow(PySide6WorkflowMixin, WinipediaHealthCheckWorkflow):
