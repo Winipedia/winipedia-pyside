@@ -2,7 +2,7 @@
 
 from winipedia_utils.testing.assertions import assert_with_msg
 
-from winipedia_pyside.workflows.configs import HealthCheckWorkflow
+from winipedia_pyside.workflows.configs import HealthCheckWorkflow, ReleaseWorkflow
 
 
 class TestPySide6WorkflowMixin:
@@ -34,3 +34,8 @@ class TestHealthCheckWorkflow:
 
 class TestReleaseWorkflow:
     """Test class for ReleaseWorkflow."""
+
+    def test_steps_release(self) -> None:
+        """Test method for steps_release."""
+        steps = ReleaseWorkflow.steps_release()
+        assert_with_msg(isinstance(steps, list), "Steps should be a list")

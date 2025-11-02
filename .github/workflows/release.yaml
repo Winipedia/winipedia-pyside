@@ -118,6 +118,10 @@ jobs:
     - name: Install Python Dependencies
       id: install_python_dependencies
       run: poetry install
+    - name: Install Pyside System Dependencies
+      id: install_pyside_system_dependencies
+      run: sudo apt-get update && sudo apt-get install -y libegl1 libpulse0
+      if: runner.os == 'Linux'
     - name: Setup Git
       id: setup_git
       run: git config --global user.email "github-actions[bot]@users.noreply.github.com"
