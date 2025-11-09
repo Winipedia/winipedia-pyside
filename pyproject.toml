@@ -8,7 +8,6 @@ authors = [
 license = "MIT"
 readme = "README.md"
 requires-python = ">=3.12,<3.14"
-dynamic = ["dependencies"]
 dependencies = ["winipedia-utils", "pyqt-toast-notification", "pyside6"]
 
 
