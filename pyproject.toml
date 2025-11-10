@@ -8,7 +8,7 @@ authors = [
 license = "MIT"
 readme = "README.md"
 requires-python = ">=3.12,<3.14"
-dependencies = ["winipedia-utils", "pyqt-toast-notification", "pyside6"]
+dynamic = ["dependencies"]
 
 
 [build-system]
@@ -32,6 +32,11 @@ types-setuptools = "*"
 bandit = "*"
 types-networkx = "*"
 
+
+[tool.poetry.dependencies]
+pyqt-toast-notification = "*"
+pyside6 = "*"
+winipedia-utils = "*"
 [tool.ruff]
 exclude = [".*", "**/migrations/*.py"]
 
