@@ -61,15 +61,14 @@ jobs:
     - name: Run Pre Commit Hooks
       id: run_pre_commit_hooks
       run: poetry run pre-commit run --all-files --verbose
+    - name: Run Tests
+      id: run_tests
+      run: poetry run pytest --log-cli-level=INFO
       env:
-        REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
         QT_QPA_PLATFORM: offscreen
         QTWEBENGINE_DISABLE_SANDBOX: '1'
         QTWEBENGINE_CHROMIUM_FLAGS: --no-sandbox --disable-gpu --disable-software-rasterizer
           --disable-dev-shm-usage
-    - name: Run Tests
-      id: run_tests
-      run: poetry run pytest --log-cli-level=INFO
   health_check:
     needs:
     - health_check_matrix

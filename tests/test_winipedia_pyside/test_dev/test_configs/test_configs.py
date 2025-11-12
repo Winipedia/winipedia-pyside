@@ -8,9 +8,9 @@ from winipedia_pyside.dev.configs.configs import HealthCheckWorkflow, ReleaseWor
 class TestPySideWorkflowMixin:
     """Test class for PySide6WorkflowMixin."""
 
-    def test_step_run_pre_commit_hooks(self) -> None:
+    def test_step_run_tests(self) -> None:
         """Test method for step_run_pre_commit_hooks."""
-        step = HealthCheckWorkflow.step_run_pre_commit_hooks()
+        step = HealthCheckWorkflow.step_run_tests()
         assert_with_msg("env" in step, "Step should have env vars")
         assert_with_msg(
             step["env"]["QT_QPA_PLATFORM"] == "offscreen",

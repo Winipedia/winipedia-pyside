@@ -24,7 +24,7 @@ class PySideWorkflowMixin(WinipediaWorkflow):
     """
 
     @classmethod
-    def step_run_pre_commit_hooks(
+    def step_run_tests(
         cls,
         *,
         step: dict[str, Any] | None = None,
@@ -34,7 +34,7 @@ class PySideWorkflowMixin(WinipediaWorkflow):
         We need to add some env vars
         so QtWebEngine doesn't try to use GPU acceleration etc.
         """
-        step = super().step_run_pre_commit_hooks(step=step)
+        step = super().step_run_tests(step=step)
         step.setdefault("env", {}).update(
             {
                 "QT_QPA_PLATFORM": "offscreen",
