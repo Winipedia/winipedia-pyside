@@ -1275,14 +1275,14 @@ QtPy = ">=2.4.1"
 
 [[package]]
 name = "pyrig"
-version = "1.1.15"
+version = "1.1.17"
 description = "A dev kit that standardizes configurations and testing"
 optional = false
 python-versions = ">=3.12"
 groups = ["main"]
 files = [
-    {file = "pyrig-1.1.15-py3-none-any.whl", hash = "sha256:caa06c4893aeb9909ed1b2facfe2d886e5994b940eea042bffcc2e5f370f906a"},
-    {file = "pyrig-1.1.15.tar.gz", hash = "sha256:162db840fffbb4d4c9a78ad30b10c1fa212cff02d0e46d95b1bdced4d885b59f"},
+    {file = "pyrig-1.1.17-py3-none-any.whl", hash = "sha256:e406bc1a87b6fcf47c13f0234dfe2dd6238f2121c0fa7a1528e9dd050977463e"},
+    {file = "pyrig-1.1.17.tar.gz", hash = "sha256:45bfe7f1eed9ea6ef8df8109205529dfdde2c311ffbb3ddf61956d479b1f85d8"},
 ]
 
 [package.dependencies]
