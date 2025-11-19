@@ -17,6 +17,8 @@ run-name: Release Workflow
 defaults:
   run:
     shell: bash
+env:
+  PYTHONDONTWRITEBYTECODE: 1
 jobs:
   health_check_matrix:
     strategy:
@@ -49,12 +51,19 @@ jobs:
     - name: Install Python Dependencies
       id: install_python_dependencies
       run: poetry install --with dev
+    - name: Setup Keyring
+      id: setup_keyring
+      run: poetry run pip install keyrings.alt && poetry run python -c "import keyring;
+        from keyrings.alt.file import PlaintextKeyring; keyring.set_keyring(PlaintextKeyring());"
     - name: Update Dependencies
       id: update_dependencies
       run: poetry update --with dev
     - name: Add Dependency Updates To Git
       id: add_dependency_updates_to_git
       run: git add pyproject.toml poetry.lock
+      env:
+        REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
+      if: runner.os == 'Linux'
     - name: Install Pyside System Dependencies
       id: install_pyside_system_dependencies
       run: sudo apt-get update && sudo apt-get install -y libegl1 libpulse0
@@ -69,6 +78,11 @@ jobs:
     - name: Run Pre Commit Hooks
       id: run_pre_commit_hooks
       run: poetry run pre-commit run --all-files
+      env:
+        QT_QPA_PLATFORM: offscreen
+        QTWEBENGINE_DISABLE_SANDBOX: '1'
+        QTWEBENGINE_CHROMIUM_FLAGS: --no-sandbox --disable-gpu --disable-software-rasterizer
+          --disable-dev-shm-usage
     - name: Run Tests
       id: run_tests
       run: poetry run pytest --log-cli-level=INFO
@@ -129,6 +143,10 @@ jobs:
       id: install_pyside_system_dependencies
       run: sudo apt-get update && sudo apt-get install -y libegl1 libpulse0
       if: runner.os == 'Linux'
+    - name: Setup Keyring
+      id: setup_keyring
+      run: poetry run pip install keyrings.alt && poetry run python -c "import keyring;
+        from keyrings.alt.file import PlaintextKeyring; keyring.set_keyring(PlaintextKeyring());"
     - name: Update Dependencies
       id: update_dependencies
       run: poetry update --with dev
