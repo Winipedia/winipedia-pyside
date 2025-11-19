@@ -1275,14 +1275,14 @@ QtPy = ">=2.4.1"
 
 [[package]]
 name = "pyrig"
-version = "1.1.19"
+version = "1.1.20"
 description = "A dev kit that standardizes configurations and testing"
 optional = false
 python-versions = ">=3.12"
 groups = ["main"]
 files = [
-    {file = "pyrig-1.1.19-py3-none-any.whl", hash = "sha256:1e3c9603422e692bf414e28f0c2e73915cde91ac16b60f6b29811deebcc351c8"},
-    {file = "pyrig-1.1.19.tar.gz", hash = "sha256:e697f377a85a572cba05f94e20d5fba06335411a3e1494c749485765cf5f60ad"},
+    {file = "pyrig-1.1.20-py3-none-any.whl", hash = "sha256:ad40a9446499f77ca4b00235141036c52fe8be937e6d901cded581359b6385e5"},
+    {file = "pyrig-1.1.20.tar.gz", hash = "sha256:d386bd799d8c9e709f02ec0f82325679a8d4a4166db6e8f99451fe9fec74ab66"},
 ]
 
 [package.dependencies]
@@ -1889,14 +1889,14 @@ test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess
 
 [[package]]
 name = "winiutils"
-version = "1.1.3"
+version = "1.1.4"
 description = "A package with many utility functions"
 optional = false
 python-versions = ">=3.12"
 groups = ["main"]
 files = [
-    {file = "winiutils-1.1.3-py3-none-any.whl", hash = "sha256:815c1480173a9b4b35279d2422b45b4fb83c09c25b76889f6ff3e5dae566fdb1"},
-    {file = "winiutils-1.1.3.tar.gz", hash = "sha256:bb9a331178948f7144d285c762486e99310ab62e27cbc4017e96a96ad188217f"},
+    {file = "winiutils-1.1.4-py3-none-any.whl", hash = "sha256:604a916267be1e0fce0c93a0c582da94fe5352484bd66f233b35816e89fdf0ec"},
+    {file = "winiutils-1.1.4.tar.gz", hash = "sha256:dd6032e67725a988d9ef5a0649b2cfcba345865cf453d3d45d8305b265ca29d6"},
 ]
 
 [package.dependencies]
