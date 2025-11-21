@@ -1,6 +1,6 @@
 [project]
 name = "winipyside"
-version = "1.0.8"
+version = "1.0.9"
 description = "A package for pyside utils"
 authors = [
     {name = "Winipedia",email = "win.steveker@gmx.de"}
