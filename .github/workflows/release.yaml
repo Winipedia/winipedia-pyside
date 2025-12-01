@@ -42,16 +42,16 @@ jobs:
     - name: Patch Version
       id: patch_version
       run: uv version --bump patch && git add pyproject.toml
-    - name: Setup Keyring
-      id: setup_keyring
-      run: uv run python -c "import keyring; from keyrings.alt.file import PlaintextKeyring;
-        keyring.set_keyring(PlaintextKeyring());"
     - name: Update Dependencies
       id: update_dependencies
       run: uv lock --upgrade && uv sync
     - name: Add Dependency Updates To Git
       id: add_dependency_updates_to_git
       run: git add pyproject.toml uv.lock
+    - name: Setup Keyring
+      id: setup_keyring
+      run: uv run python -c "import keyring; from keyrings.alt.file import PlaintextKeyring;
+        keyring.set_keyring(PlaintextKeyring());"
     - name: Install Pyside System Dependencies
       id: install_pyside_system_dependencies
       run: sudo apt-get update && sudo apt-get install -y libegl1 libpulse0
@@ -116,16 +116,16 @@ jobs:
     - name: Patch Version
       id: patch_version
       run: uv version --bump patch && git add pyproject.toml
-    - name: Setup Keyring
-      id: setup_keyring
-      run: uv run python -c "import keyring; from keyrings.alt.file import PlaintextKeyring;
-        keyring.set_keyring(PlaintextKeyring());"
     - name: Update Dependencies
       id: update_dependencies
       run: uv lock --upgrade && uv sync
     - name: Add Dependency Updates To Git
       id: add_dependency_updates_to_git
       run: git add pyproject.toml uv.lock
+    - name: Setup Keyring
+      id: setup_keyring
+      run: uv run python -c "import keyring; from keyrings.alt.file import PlaintextKeyring;
+        keyring.set_keyring(PlaintextKeyring());"
     - name: Install Pyside System Dependencies
       id: install_pyside_system_dependencies
       run: sudo apt-get update && sudo apt-get install -y libegl1 libpulse0
