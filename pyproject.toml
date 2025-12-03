@@ -1,6 +1,5 @@
 [project]
 name = "winipyside"
-
 version = "2.1.7"
 description = "A package for pyside utils"
 authors = [
@@ -30,7 +29,6 @@ dev = [
     "pytest-qt",
     "ruff",
     "types-defusedxml",
-    "types-networkx",
     "types-pyinstaller",
     "types-pyyaml",
     "types-setuptools",
