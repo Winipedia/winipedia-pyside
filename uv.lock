@@ -745,7 +745,7 @@ wheels = [
 
 [[package]]
 name = "pyrig"
-version = "2.0.21"
+version = "2.0.23"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "dotenv" },
@@ -759,9 +759,9 @@ dependencies = [
     { name = "tomlkit" },
     { name = "typer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/31/80/4a92afdc6b20c00a2ecc5cbc262e6b03ddf574fac7e6b27416d89d382d63/pyrig-2.0.21.tar.gz", hash = "sha256:db5f592d73e3c9e085a71a42975fbc91eb2d2bca1a4cd313eec402a52ae70906", size = 67460, upload-time = "2025-12-02T12:26:55.19Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c6/e3/37c7d9059a58721ac2b7ae32ffb99e938eab1bd3c751a340536173737db0/pyrig-2.0.23.tar.gz", hash = "sha256:eaff291b6bcd839cd0dd8e20401ed60640039d8778c56722a6414c6462fb3fea", size = 67933, upload-time = "2025-12-02T13:37:18.657Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/8d/df/0f9e94746021c30e277f22eb38c3459ec0a14af1ef888742cc8e512a1a19/pyrig-2.0.21-py3-none-any.whl", hash = "sha256:c49cd47d647d61ec1871b535cd17816f4e5223227ec990a41864e2b67534292f", size = 93483, upload-time = "2025-12-02T12:26:54.263Z" },
+    { url = "https://files.pythonhosted.org/packages/d3/40/5339ab01372957ae0d54e2d74accaf0885106cde819a2673e73df083acef/pyrig-2.0.23-py3-none-any.whl", hash = "sha256:1ea8f6fa8bf3c48c77ea407ddd3a6a9121fbf31c43652baf7340f77794b3ab88", size = 93707, upload-time = "2025-12-02T13:37:17.665Z" },
 ]
 
 [[package]]
@@ -1160,7 +1160,7 @@ wheels = [
 
 [[package]]
 name = "winipyside"
-version = "2.1.6"
+version = "2.1.7"
 source = { editable = "." }
 dependencies = [
     { name = "pyqt-toast-notification" },
