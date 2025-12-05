@@ -3,7 +3,7 @@ name = "winipyside"
 version = "2.1.14"
 description = "A package for pyside utils"
 authors = [
-    {name = "Winipedia",email = "win.steveker@gmx.de"},
+    {name = "Winipedia"},
 ]
 license = "MIT"
 readme = "README.md"
